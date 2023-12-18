@@ -3,6 +3,7 @@ package com.academy.sirma.finalExam.service;
 import com.academy.sirma.finalExam.dto.EmployeeReferenceDto;
 import com.academy.sirma.finalExam.model.EmployeeReference;
 import com.academy.sirma.finalExam.repository.EmployeeReferenceRepository;
+import com.academy.sirma.finalExam.utility.Convert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +51,8 @@ public class EmployeeReferenceService {
         LocalDate tempEndDate = null;
         for (int i = 0; i < numberOfReferences - 1; i++) {
             for (int j = i + 1; j <= numberOfReferences - 1; j++) {
+                empRefList[i].setDateTo(Convert.NullDateToCurrentDate(empRefList[i].getDateTo()));
+                empRefList[j].setDateTo(Convert.NullDateToCurrentDate(empRefList[j].getDateTo()));
                 boolean isSameProject = empRefList[i].getProjectId() == empRefList[j].getProjectId();
                 boolean isNotSameEmployee = empRefList[i].getEmpId() != empRefList[j].getEmpId();
                 boolean isStartDate2BeforeEndDate1 = empRefList[j].getDateFrom().isBefore(empRefList[i].getDateTo());

@@ -1,6 +1,7 @@
-package com.academy.sirma.finalExam.utility;
+package com.academy.sirma.finalExam.repository;
 
 import com.academy.sirma.finalExam.model.EmployeeReference;
+import com.academy.sirma.finalExam.utility.Constants;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -16,7 +17,7 @@ public class UploadCsvFile {
         String line;
         List<EmployeeReference> employeeReferenceList = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Georgiev\\IdeaProjects\\finalExam\\src\\main\\resources\\EmployeeReferenceList.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(Constants.uploadFileName))) {
             while ((line = br.readLine()) != null) {
                 String[] item = line.split("\\s*,\\s*");
                 EmployeeReference tempEmployeeReference = new EmployeeReference();

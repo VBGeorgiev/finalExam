@@ -1,42 +1,57 @@
 package com.academy.sirma.finalExam.dto;
 
-import jakarta.persistence.Transient;
-import java.util.HashMap;
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDate;
 
 public class EmployeeReferenceDto {
-    private String referenceIndex;
-    private Long maxSharedDays;
-    private HashMap<Integer, Long> projectContribution;
+    private int empId;
+
+    private int projectId;
+
+    private LocalDate dateFrom;
+    private LocalDate dateTo;
 
     public EmployeeReferenceDto() {
     }
 
-    public EmployeeReferenceDto(String referenceIndex, HashMap<Integer, Long> projectContribution) {
-        this.referenceIndex = referenceIndex;
-        this.projectContribution = projectContribution;
+    public EmployeeReferenceDto(int empId, int projectId, LocalDate dateFrom, LocalDate dateTo) {
+        this.empId = empId;
+        this.projectId = projectId;
+        this.dateFrom = dateFrom;
+        this.dateTo = dateTo;
     }
 
-    public String getReferenceIndex() {
-        return referenceIndex;
+    public int getEmpId() {
+        return empId;
     }
 
-    public void setReferenceIndex(String referenceIndex) {
-        this.referenceIndex = referenceIndex;
+    public void setEmpId(int empId) {
+        this.empId = empId;
     }
 
-    public HashMap<Integer, Long> getProjectContribution() {
-        return projectContribution;
+    public int getProjectId() {
+        return projectId;
     }
 
-    public void setProjectContribution(HashMap<Integer, Long> projectContribution) {
-        this.projectContribution = projectContribution;
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
     }
 
-    public Long getMaxSharedDays() {
-        return maxSharedDays;
+    public LocalDate getDateFrom() {
+        return dateFrom;
     }
 
-    public void setMaxSharedDays(Long maxSharedDays) {
-        this.maxSharedDays = maxSharedDays;
+    public void setDateFrom(LocalDate dateFrom) {
+        this.dateFrom = dateFrom;
     }
+
+    public LocalDate getDateTo() {
+        return dateTo;
+    }
+
+    public void setDateTo(LocalDate dateTo) {
+        this.dateTo = dateTo;
+    }
+
 }

@@ -19,7 +19,7 @@ public class UploadCsvFile {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try (BufferedReader br = new BufferedReader(new FileReader(Constants.uploadFileName))) {
             while ((line = br.readLine()) != null) {
-                String[] item = line.split("\\s*,\\s*");
+                String[] item = line.split(Constants.commaSeparated);
                 EmployeeReference tempEmployeeReference = new EmployeeReference();
                 int empId = Integer.parseInt(item[0]);
                 tempEmployeeReference.setEmpId(empId);

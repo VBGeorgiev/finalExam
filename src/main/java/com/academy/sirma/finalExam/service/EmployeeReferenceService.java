@@ -1,9 +1,11 @@
 package com.academy.sirma.finalExam.service;
 
 import com.academy.sirma.finalExam.dto.EmployeeReferenceDto;
+import com.academy.sirma.finalExam.dto.OutputReferenceDto;
 import com.academy.sirma.finalExam.model.EmployeeReference;
 import com.academy.sirma.finalExam.repository.EmployeeReferenceRepository;
 import com.academy.sirma.finalExam.utility.Convert;
+import com.academy.sirma.finalExam.utility.EmployeeReferenceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,14 +41,14 @@ public class EmployeeReferenceService {
         return employeeReferenceList.toArray(new EmployeeReference[arrayLength]);
     }
 
-    public Map<String, EmployeeReferenceDto> CalculateSharedProjectDays() {
+    public Map<String, OutputReferenceDto> CalculateSharedProjectDays() {
         List<EmployeeReference> employeeReferenceList = employeeReferenceRepository.findAll();
         int numberOfReferences = employeeReferenceList.size();
         EmployeeReference[] empRefList = employeeReferenceList.toArray(new EmployeeReference[numberOfReferences]);
         List<Integer> projectIds = new ArrayList<>();
         long tempDays = 0;
         String tempEmpKey = "";
-        Map<String, EmployeeReferenceDto> outputRefMap = new HashMap<>();
+        Map<String, OutputReferenceDto> outputRefMap = new HashMap<>();
         LocalDate tempStartDate = null;
         LocalDate tempEndDate = null;
         for (int i = 0; i < numberOfReferences - 1; i++) {
@@ -81,33 +83,33 @@ public class EmployeeReferenceService {
                         }
 
                         if (outputRefMap.containsKey(tempEmpKey)) {
-                            EmployeeReferenceDto existingEmployeeReferenceDto = outputRefMap.get(tempEmpKey);
-                            if (existingEmployeeReferenceDto.getProjectContribution().containsKey(empRefList[i].getProjectId())) {
-                                Long currentPeriod = existingEmployeeReferenceDto
+                            OutputReferenceDto existingOutputReferenceDto = outputRefMap.get(tempEmpKey);
+                            if (existingOutputReferenceDto.getProjectContribution().containsKey(empRefList[i].getProjectId())) {
+                                Long currentPeriod = existingOutputReferenceDto
                                         .getProjectContribution()
                                         .get(empRefList[i].getProjectId());
                                 Long newPeriod = currentPeriod + tempDays;
-                                existingEmployeeReferenceDto
+                                existingOutputReferenceDto
                                         .getProjectContribution()
                                         .put(empRefList[i].getProjectId(), newPeriod);
                             } else {
-                                existingEmployeeReferenceDto
+                                existingOutputReferenceDto
                                         .getProjectContribution()
                                         .put(empRefList[i].getProjectId(), tempDays);
                             }
 
-                            Long currentMaxSharedDays = existingEmployeeReferenceDto.getMaxSharedDays();
-                            existingEmployeeReferenceDto.setMaxSharedDays(currentMaxSharedDays + tempDays);
-                            outputRefMap.put(tempEmpKey, existingEmployeeReferenceDto);
+                            Long currentMaxSharedDays = existingOutputReferenceDto.getMaxSharedDays();
+                            existingOutputReferenceDto.setMaxSharedDays(currentMaxSharedDays + tempDays);
+                            outputRefMap.put(tempEmpKey, existingOutputReferenceDto);
 
                         } else {
-                            EmployeeReferenceDto newEmployeeReferenceDto = new EmployeeReferenceDto();
-                            newEmployeeReferenceDto.setReferenceIndex(tempEmpKey);
-                            newEmployeeReferenceDto.setMaxSharedDays(tempDays);
+                            OutputReferenceDto newOutputReferenceDto = new OutputReferenceDto();
+                            newOutputReferenceDto.setReferenceIndex(tempEmpKey);
+                            newOutputReferenceDto.setMaxSharedDays(tempDays);
                             HashMap<Integer, Long> tempProjectContribution = new HashMap<>();
                             tempProjectContribution.put(empRefList[i].getProjectId(), tempDays);
-                            newEmployeeReferenceDto.setProjectContribution(tempProjectContribution);
-                            outputRefMap.put(tempEmpKey, newEmployeeReferenceDto);
+                            newOutputReferenceDto.setProjectContribution(tempProjectContribution);
+                            outputRefMap.put(tempEmpKey, newOutputReferenceDto);
                         }
 
                     }
@@ -119,6 +121,31 @@ public class EmployeeReferenceService {
         }
 
         return outputRefMap;
+    }
+
+    public String addReference(EmployeeReference employeeReference) {
+        employeeReferenceRepository.save(employeeReference);
+        return "Employee reference successfully added";
+    }
+
+    public String deleteById(Long refId) {
+        if(employeeReferenceRepository.existsById(refId)) {
+            employeeReferenceRepository.deleteById(refId);
+            return "Reference id " + refId + " deleted successfully";
+        }
+
+        return "Reference " + refId + " not found";
+    }
+
+    public EmployeeReferenceDto getById(Long refId) {
+        EmployeeReference empRef = employeeReferenceRepository.findById(refId).orElse(null);
+        EmployeeReferenceDto empRefDto = new EmployeeReferenceDto();
+        if(empRef != null) {
+            empRefDto = EmployeeReferenceHelper.empRefTOEmpRefDto(empRef);
+        } else {
+            empRefDto = null;
+        }
+        return empRefDto;
     }
 
 }

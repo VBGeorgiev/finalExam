@@ -38,10 +38,16 @@ public class EmployeeReferenceController {
         return employeeReferenceService.getUniqueProjectId().toString();
     }
 
-    @GetMapping("/calculate")
+    @GetMapping("/calculateAll")
     public ResponseEntity<?> calculateAll() {
         Map<String, OutputReferenceDto> response = employeeReferenceService.CalculateSharedProjectDays();
 
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/calculateMax")
+    public ResponseEntity<?> calculateMax() {
+        OutputReferenceDto response = employeeReferenceService.CalculateMaxSharedProjectDays();
         return ResponseEntity.ok(response);
     }
 

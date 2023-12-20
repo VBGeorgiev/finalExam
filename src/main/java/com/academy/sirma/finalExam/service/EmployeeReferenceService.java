@@ -11,10 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class EmployeeReferenceService {
@@ -43,6 +40,21 @@ public class EmployeeReferenceService {
         List<EmployeeReference> employeeReferenceList = employeeReferenceRepository.findAll();
         int arrayLength = employeeReferenceList.size();
         return employeeReferenceList.toArray(new EmployeeReference[arrayLength]);
+    }
+
+    public OutputReferenceDto CalculateMaxSharedProjectDays() {
+        Map<String, OutputReferenceDto> outRefMap = CalculateSharedProjectDays();
+        long maxSharedDays = 0;
+        String maxKey = "";
+        for(Map.Entry<String, OutputReferenceDto> tempDto : outRefMap.entrySet()) {
+            if(tempDto.getValue().getMaxSharedDays() > maxSharedDays) {
+                maxSharedDays = tempDto.getValue().getMaxSharedDays();
+                maxKey = tempDto.getKey();
+            };
+
+        }
+
+        return outRefMap.get(maxKey);
     }
 
     public Map<String, OutputReferenceDto> CalculateSharedProjectDays() {

@@ -7,6 +7,7 @@ import com.academy.sirma.finalExam.repository.BackupToCsvFile;
 import com.academy.sirma.finalExam.service.EmployeeReferenceService;
 import com.academy.sirma.finalExam.repository.UploadCsvFile;
 import com.academy.sirma.finalExam.utility.EmployeeReferenceHelper;
+import com.academy.sirma.finalExam.validate.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +23,7 @@ public class EmployeeReferenceController {
     @PostMapping("/import")
     public String uploadEmployeeReferenceFile(){
         List<EmployeeReference> employeeReferenceList = new UploadCsvFile().readEmployeeReferenceList();
-        employeeReferenceService.saveAll(employeeReferenceList);
-        return "File successfully uploaded";
+        return employeeReferenceService.saveAll(employeeReferenceList);
     }
 
     @PutMapping("/backup")
@@ -71,4 +71,5 @@ public class EmployeeReferenceController {
             return ResponseEntity.ok(empRefDto);
         }
     }
+
 }

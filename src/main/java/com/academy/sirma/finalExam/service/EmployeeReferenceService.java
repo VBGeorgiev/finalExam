@@ -22,6 +22,10 @@ public class EmployeeReferenceService {
     private EmployeeReferenceRepository employeeReferenceRepository;
 
     public String saveAll(List<EmployeeReference> employeeReferences) {
+        if(employeeReferences.isEmpty()) {
+            return "No valid references to be imported";
+        }
+
         employeeReferenceRepository.saveAll(employeeReferences);
         return "Employee project references saved successfully";
     }

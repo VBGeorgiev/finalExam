@@ -2,13 +2,13 @@ package com.academy.sirma.finalExam.repository;
 
 import com.academy.sirma.finalExam.model.EmployeeReference;
 import com.academy.sirma.finalExam.utility.Constants;
+import com.academy.sirma.finalExam.validate.Validate;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,28 +16,43 @@ public class UploadCsvFile {
     public List<EmployeeReference> readEmployeeReferenceList() {
         String line;
         List<EmployeeReference> employeeReferenceList = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try (BufferedReader br = new BufferedReader(new FileReader(Constants.uploadFileName))) {
             while ((line = br.readLine()) != null) {
+                if(line.isEmpty()) {
+                    System.out.println("This reference, (" + line + "), will be ignored");
+                    continue;
+                }
                 String[] item = line.split(Constants.commaSeparated);
+                int empId = 0;
+                int projectId = 0;
                 EmployeeReference tempEmployeeReference = new EmployeeReference();
-                int empId = Integer.parseInt(item[0]);
+                if(Validate.isNumber(item[0])) {
+                    empId = Integer.parseInt(item[0]);
+                } else {
+                    System.out.println("This reference, (" + line + "), will be ignored");
+                    continue;
+                }
+
+                if(Validate.isNumber(item[1])) {
+                    projectId = Integer.parseInt(item[1]);
+                } else {
+                    System.out.println("This reference, (" + line + "), will be ignored");
+                    continue;
+                }
+
+                String[] strDates = new String[2];
+                strDates[0] = item[2];
+                strDates[1] = item[3];
+                LocalDate[] parseDates = Validate.getDates(strDates);
+                if(parseDates[2] == null) {
+                    System.out.println("This reference, (" + line + "), will be ignored");
+                    continue;
+                }
+
                 tempEmployeeReference.setEmpId(empId);
-                int projectId = Integer.parseInt(item[1]);
                 tempEmployeeReference.setProjectId(projectId);
-//                Date to be improved
-                if(!item[2].equals("null")) {
-                    tempEmployeeReference.setDateFrom(LocalDate.parse(item[2], formatter));
-                } else {
-                    tempEmployeeReference.setDateTo(null);
-                }
-
-                if(!item[3].equals("NULL")) {
-                    tempEmployeeReference.setDateTo(LocalDate.parse(item[3], formatter));
-                } else {
-                    tempEmployeeReference.setDateTo(null);
-                }
-
+                tempEmployeeReference.setDateFrom(parseDates[0]);
+                tempEmployeeReference.setDateTo(parseDates[1]);
                 employeeReferenceList.add(tempEmployeeReference);
             }
 

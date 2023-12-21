@@ -53,7 +53,23 @@ public class UploadCsvFile {
                 tempEmployeeReference.setProjectId(projectId);
                 tempEmployeeReference.setDateFrom(parseDates[0]);
                 tempEmployeeReference.setDateTo(parseDates[1]);
-                employeeReferenceList.add(tempEmployeeReference);
+
+
+                boolean isNotDublicate = true;
+                for(int i = 0; i < employeeReferenceList.size(); i++) {
+                    if(employeeReferenceList.get(i).isSame(tempEmployeeReference)) {
+                        isNotDublicate = false;
+                        break;
+                    }
+
+                }
+
+                if(isNotDublicate) {
+                    employeeReferenceList.add(tempEmployeeReference);
+                } else {
+                    System.out.println("This duplicated reference, (" + line + "), will be ignored");
+                }
+
             }
 
         } catch (FileNotFoundException e) {

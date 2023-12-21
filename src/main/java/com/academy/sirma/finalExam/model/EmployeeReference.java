@@ -60,4 +60,23 @@ public class EmployeeReference {
         this.dateTo = dateTo;
     }
 
+    public boolean isSame(EmployeeReference empRef) {
+        if(this.empId != empRef.getEmpId() ||
+        this.projectId != empRef.getProjectId() ||
+        !empRef.getDateFrom().isEqual(this.dateFrom)) {
+            return false;
+        }
+
+        if(empRef.getDateTo() != null && this.dateTo != null) {
+            if(!empRef.getDateTo().isEqual(this.dateTo)) {
+                return false;
+            }
+
+        } else if (empRef.getDateTo() != null || this.dateTo != null) {
+            return false;
+        }
+
+        return true;
+    }
+
 }

@@ -58,8 +58,7 @@ public class EmployeeReferenceController {
 
     @PostMapping("/add")
     public ResponseEntity<?> addReference(@RequestBody EmployeeReferenceDto empRefDto) {
-        EmployeeReference empRef = EmployeeReferenceHelper.empRefDTOToEmpRef(empRefDto);
-        return ResponseEntity.ok(employeeReferenceService.addReference(empRef));
+        return ResponseEntity.ok(employeeReferenceService.addReference(empRefDto));
     }
 
     @DeleteMapping("/delete/{id}")
@@ -76,6 +75,18 @@ public class EmployeeReferenceController {
         } else {
             return ResponseEntity.ok(empRefDto);
         }
+
+    }
+
+    @PutMapping("update/{id}")
+    public ResponseEntity<?> updateById(@PathVariable Long id, @RequestBody EmployeeReferenceDto empRefDto) {
+        EmployeeReferenceDto outEmpRefDto = employeeReferenceService.updateById(id, empRefDto);
+        if(outEmpRefDto == null) {
+            return ResponseEntity.ok("No reference has been found by this id");
+        } else {
+            return ResponseEntity.ok(empRefDto);
+        }
+
     }
 
 }

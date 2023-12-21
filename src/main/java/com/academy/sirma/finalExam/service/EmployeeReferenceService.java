@@ -139,8 +139,10 @@ public class EmployeeReferenceService {
         return outputRefMap;
     }
 
-    public String addReference(EmployeeReference employeeReference) {
-        employeeReferenceRepository.save(employeeReference);
+    public String addReference(EmployeeReferenceDto empRefDto) {
+        EmployeeReference empRef = new EmployeeReference();
+        empRef = EmployeeReferenceHelper.empRefDTOToEmpRef(empRefDto);
+        employeeReferenceRepository.save(empRef);
         return "Employee reference successfully added";
     }
 
@@ -162,6 +164,22 @@ public class EmployeeReferenceService {
             empRefDto = null;
         }
         return empRefDto;
+    }
+
+    public EmployeeReferenceDto updateById(Long refId, EmployeeReferenceDto empRefDto) {
+            EmployeeReference empRef = employeeReferenceRepository.findById(refId).orElse(null);
+            if (empRef != null) {
+                empRef.setEmpId(empRefDto.getEmpId());
+                empRef.setProjectId(empRefDto.getProjectId());
+                empRef.setDateFrom(empRefDto.getDateFrom());
+                empRef.setDateTo(empRefDto.getDateTo());
+                employeeReferenceRepository.save(empRef);
+                return empRefDto;
+            }
+        return null;
+
+
+
     }
 
 }

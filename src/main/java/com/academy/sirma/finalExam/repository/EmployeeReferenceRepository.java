@@ -2,6 +2,7 @@ package com.academy.sirma.finalExam.repository;
 
 import com.academy.sirma.finalExam.model.EmployeeReference;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;

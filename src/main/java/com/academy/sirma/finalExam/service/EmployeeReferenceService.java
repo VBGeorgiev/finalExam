@@ -7,6 +7,7 @@ import com.academy.sirma.finalExam.repository.EmployeeReferenceRepository;
 import com.academy.sirma.finalExam.utility.Convert;
 import com.academy.sirma.finalExam.utility.EmployeeReferenceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,8 +24,14 @@ public class EmployeeReferenceService {
             return "No valid references to be imported";
         }
 
-        employeeReferenceRepository.saveAll(employeeReferences);
-        return "Employee project references saved successfully";
+        try {
+            employeeReferenceRepository.saveAll(employeeReferences);
+            return "Employee project references saved successfully";
+        } catch (DataIntegrityViolationException e) {
+            System.out.println("One or more references already exist in DB: " + e);
+            return "One or more references already exist in DB";
+        }
+
     }
 
     public String deleteAll() {
@@ -142,8 +149,14 @@ public class EmployeeReferenceService {
     public String addReference(EmployeeReferenceDto empRefDto) {
         EmployeeReference empRef = new EmployeeReference();
         empRef = EmployeeReferenceHelper.empRefDTOToEmpRef(empRefDto);
-        employeeReferenceRepository.save(empRef);
-        return "Employee reference successfully added";
+        try {
+            employeeReferenceRepository.save(empRef);
+            return "Employee reference successfully added";
+        } catch(DataIntegrityViolationException e) {
+            System.out.println("The reference already exist: " + e);
+            return "Employee reference ignored: already exist";
+        }
+
     }
 
     public String deleteById(Long refId) {
@@ -173,8 +186,13 @@ public class EmployeeReferenceService {
                 empRef.setProjectId(empRefDto.getProjectId());
                 empRef.setDateFrom(empRefDto.getDateFrom());
                 empRef.setDateTo(empRefDto.getDateTo());
-                employeeReferenceRepository.save(empRef);
-                return empRefDto;
+                try {
+                    employeeReferenceRepository.save(empRef);
+                    return empRefDto;
+                } catch(DataIntegrityViolationException e) {
+                    System.out.println("Updated reference already exist in db: " + e);
+                    return null;
+                }
             }
         return null;
 

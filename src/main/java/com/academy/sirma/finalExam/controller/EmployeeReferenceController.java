@@ -82,7 +82,7 @@ public class EmployeeReferenceController {
     public ResponseEntity<?> updateById(@PathVariable Long id, @RequestBody EmployeeReferenceDto empRefDto) {
         EmployeeReferenceDto outEmpRefDto = employeeReferenceService.updateById(id, empRefDto);
         if(outEmpRefDto == null) {
-            return ResponseEntity.ok("No reference has been found by this id");
+            return ResponseEntity.ok("Update ignored: No reference has been found by this id or already exist");
         } else {
             return ResponseEntity.ok(empRefDto);
         }

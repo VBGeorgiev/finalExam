@@ -5,14 +5,14 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 @Entity
-@Table(name="employee_project_reference")
+@Table(name = "employee_project_reference",
+        uniqueConstraints = {@UniqueConstraint(columnNames =
+                {"empId", "projectId", "dateFrom", "dateTo"})})
 public class EmployeeReference {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
     private int empId;
-    @NotNull
     private int projectId;
     @NotNull
     private LocalDate dateFrom;

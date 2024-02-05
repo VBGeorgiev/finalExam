@@ -48,9 +48,9 @@ public class Validate {
 
     public static LocalDate parseDate(String strDate) {
         LocalDate tempDate = null;
-        int formatArrayLength = Constants.DateFormatSupport.length;
+        int formatArrayLength = Constants.dateFormatSupport.length;
         for(int i = 0; i < formatArrayLength; i++) {
-            String tempFormat = Constants.DateFormatSupport[i];
+            String tempFormat = Constants.dateFormatSupport[i];
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(tempFormat, Locale.getDefault());
             try{
                 tempDate = LocalDate.parse(strDate, formatter);

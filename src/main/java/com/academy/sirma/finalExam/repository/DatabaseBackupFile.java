@@ -7,7 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class BackupToCsvFile {
+public class DatabaseBackupFile {
     public String writeDatabase(EmployeeReference[] employeeRef) {
         try (PrintWriter out = new PrintWriter(new FileWriter(Constants.backupFileName))) {
             for (EmployeeReference empRef:employeeRef) {

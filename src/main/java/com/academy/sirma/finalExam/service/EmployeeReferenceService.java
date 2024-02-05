@@ -4,7 +4,7 @@ import com.academy.sirma.finalExam.dto.EmployeeReferenceDto;
 import com.academy.sirma.finalExam.dto.OutputReferenceDto;
 import com.academy.sirma.finalExam.model.EmployeeReference;
 import com.academy.sirma.finalExam.repository.EmployeeReferenceRepository;
-import com.academy.sirma.finalExam.utility.Convert;
+import com.academy.sirma.finalExam.utility.NullDate;
 import com.academy.sirma.finalExam.utility.EmployeeReferenceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -49,8 +49,8 @@ public class EmployeeReferenceService {
         return employeeReferenceList.toArray(new EmployeeReference[arrayLength]);
     }
 
-    public OutputReferenceDto CalculateMaxSharedProjectDays() {
-        Map<String, OutputReferenceDto> outRefMap = CalculateSharedProjectDays();
+    public OutputReferenceDto getMaxSharedProjectDays() {
+        Map<String, OutputReferenceDto> outRefMap = getAllSharedProjectDays();
         long maxSharedDays = 0;
         String maxKey = "";
         for(Map.Entry<String, OutputReferenceDto> tempDto : outRefMap.entrySet()) {
@@ -64,7 +64,7 @@ public class EmployeeReferenceService {
         return outRefMap.get(maxKey);
     }
 
-    public Map<String, OutputReferenceDto> CalculateSharedProjectDays() {
+    public Map<String, OutputReferenceDto> getAllSharedProjectDays() {
         List<EmployeeReference> employeeReferenceList = employeeReferenceRepository.findAll();
         int numberOfReferences = employeeReferenceList.size();
         EmployeeReference[] empRefList = employeeReferenceList.toArray(new EmployeeReference[numberOfReferences]);
@@ -76,8 +76,8 @@ public class EmployeeReferenceService {
         LocalDate tempEndDate = null;
         for (int i = 0; i < numberOfReferences - 1; i++) {
             for (int j = i + 1; j <= numberOfReferences - 1; j++) {
-                empRefList[i].setDateTo(Convert.NullDateToCurrentDate(empRefList[i].getDateTo()));
-                empRefList[j].setDateTo(Convert.NullDateToCurrentDate(empRefList[j].getDateTo()));
+                empRefList[i].setDateTo(NullDate.convertToCurrentDate(empRefList[i].getDateTo()));
+                empRefList[j].setDateTo(NullDate.convertToCurrentDate(empRefList[j].getDateTo()));
                 boolean isSameProject = empRefList[i].getProjectId() == empRefList[j].getProjectId();
                 boolean isNotSameEmployee = empRefList[i].getEmpId() != empRefList[j].getEmpId();
                 boolean isStartDate2BeforeEndDate1 = empRefList[j].getDateFrom().isBefore(empRefList[i].getDateTo());
@@ -148,7 +148,7 @@ public class EmployeeReferenceService {
 
     public String addReference(EmployeeReferenceDto empRefDto) {
         EmployeeReference empRef = new EmployeeReference();
-        empRef = EmployeeReferenceHelper.empRefDTOToEmpRef(empRefDto);
+        empRef = EmployeeReferenceHelper.empRefDtoToEmpRef(empRefDto);
         try {
             employeeReferenceRepository.save(empRef);
             return "Employee reference successfully added";
@@ -172,7 +172,7 @@ public class EmployeeReferenceService {
         EmployeeReference empRef = employeeReferenceRepository.findById(refId).orElse(null);
         EmployeeReferenceDto empRefDto = new EmployeeReferenceDto();
         if(empRef != null) {
-            empRefDto = EmployeeReferenceHelper.empRefTOEmpRefDto(empRef);
+            empRefDto = EmployeeReferenceHelper.empRefToEmpRefDto(empRef);
         } else {
             empRefDto = null;
         }
@@ -193,10 +193,10 @@ public class EmployeeReferenceService {
                     System.out.println("Updated reference already exist in db: " + e);
                     return null;
                 }
+
             }
+
         return null;
-
-
 
     }
 

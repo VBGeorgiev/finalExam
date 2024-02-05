@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UploadCsvFile {
+public class CsvDataFile {
     public List<EmployeeReference> readEmployeeReferenceList() {
         String line;
         List<EmployeeReference> employeeReferenceList = new ArrayList<>();

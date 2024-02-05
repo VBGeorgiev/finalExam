@@ -4,7 +4,7 @@ import com.academy.sirma.finalExam.dto.EmployeeReferenceDto;
 import com.academy.sirma.finalExam.model.EmployeeReference;
 
 public class EmployeeReferenceHelper {
-    public static EmployeeReference empRefDTOToEmpRef(EmployeeReferenceDto empRefDto) {
+    public static EmployeeReference empRefDtoToEmpRef(EmployeeReferenceDto empRefDto) {
         EmployeeReference empRef = new EmployeeReference();
         empRef.setEmpId(empRefDto.getEmpId());
         empRef.setProjectId(empRefDto.getProjectId());
@@ -13,7 +13,7 @@ public class EmployeeReferenceHelper {
         return empRef;
     }
 
-    public static EmployeeReferenceDto empRefTOEmpRefDto(EmployeeReference empRef) {
+    public static EmployeeReferenceDto empRefToEmpRefDto(EmployeeReference empRef) {
         EmployeeReferenceDto empRefDto = new EmployeeReferenceDto();
         empRefDto.setEmpId(empRef.getEmpId());
         empRefDto.setProjectId(empRef.getProjectId());

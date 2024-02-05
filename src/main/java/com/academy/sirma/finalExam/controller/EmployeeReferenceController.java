@@ -3,11 +3,9 @@ package com.academy.sirma.finalExam.controller;
 import com.academy.sirma.finalExam.dto.EmployeeReferenceDto;
 import com.academy.sirma.finalExam.dto.OutputReferenceDto;
 import com.academy.sirma.finalExam.model.EmployeeReference;
-import com.academy.sirma.finalExam.repository.BackupToCsvFile;
+import com.academy.sirma.finalExam.repository.DatabaseBackupFile;
 import com.academy.sirma.finalExam.service.EmployeeReferenceService;
-import com.academy.sirma.finalExam.repository.UploadCsvFile;
-import com.academy.sirma.finalExam.utility.EmployeeReferenceHelper;
-import com.academy.sirma.finalExam.validate.Validate;
+import com.academy.sirma.finalExam.repository.CsvDataFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,44 +13,46 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
+@RequestMapping("api/v1/")
 public class EmployeeReferenceController {
     @Autowired
     private EmployeeReferenceService employeeReferenceService;
 
     @PostMapping("/import")
     public String uploadEmployeeReferenceFile(){
-        List<EmployeeReference> employeeReferenceList = new UploadCsvFile().readEmployeeReferenceList();
+        List<EmployeeReference> employeeReferenceList = new CsvDataFile().readEmployeeReferenceList();
         return employeeReferenceService.saveAll(employeeReferenceList);
     }
 
     @PutMapping("/backup")
     public ResponseEntity<?> backupDatabase() {
         EmployeeReference[] empRef = employeeReferenceService.getAllReferences();
-        String response = new BackupToCsvFile().writeDatabase(empRef);
+        String response = new DatabaseBackupFile().writeDatabase(empRef);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/findProjectIds")
-    public String findProjectIds() {
+    @GetMapping("/getProjectIds")
+    public String getUniqueProjectIds() {
         return employeeReferenceService.getUniqueProjectId().toString();
     }
 
-    @GetMapping("/calculateAll")
-    public ResponseEntity<?> calculateAll() {
-        Map<String, OutputReferenceDto> response = employeeReferenceService.CalculateSharedProjectDays();
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAllSharedProjectDays() {
+        Map<String, OutputReferenceDto> response = employeeReferenceService.getAllSharedProjectDays();
 
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/calculateMax")
-    public ResponseEntity<?> calculateMax() {
-        OutputReferenceDto response = employeeReferenceService.CalculateMaxSharedProjectDays();
+    @GetMapping("/getMax")
+    public ResponseEntity<?> getMaxSharedProjectDays() {
+        OutputReferenceDto response = employeeReferenceService.getMaxSharedProjectDays();
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/deleteAll")
-    public String deleteAllReferencesFromDB() {
+    public String deleteAllReferencesFromDatabase() {
         return employeeReferenceService.deleteAll();
     }
 

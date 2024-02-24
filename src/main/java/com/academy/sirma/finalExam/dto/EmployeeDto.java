@@ -1,10 +1,8 @@
 package com.academy.sirma.finalExam.dto;
 
-import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDate;
 
-public class EmployeeReferenceDto {
+public class EmployeeDto {
     private int empId;
 
     private int projectId;
@@ -12,10 +10,10 @@ public class EmployeeReferenceDto {
     private LocalDate dateFrom;
     private LocalDate dateTo;
 
-    public EmployeeReferenceDto() {
+    public EmployeeDto() {
     }
 
-    public EmployeeReferenceDto(int empId, int projectId, LocalDate dateFrom, LocalDate dateTo) {
+    public EmployeeDto(int empId, int projectId, LocalDate dateFrom, LocalDate dateTo) {
         this.empId = empId;
         this.projectId = projectId;
         this.dateFrom = dateFrom;

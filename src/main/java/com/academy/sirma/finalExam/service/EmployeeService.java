@@ -1,9 +1,9 @@
 package com.academy.sirma.finalExam.service;
 
-import com.academy.sirma.finalExam.dto.EmployeeReferenceDto;
-import com.academy.sirma.finalExam.dto.OutputReferenceDto;
-import com.academy.sirma.finalExam.model.EmployeeReference;
-import com.academy.sirma.finalExam.repository.EmployeeReferenceRepository;
+import com.academy.sirma.finalExam.dto.EmployeeDto;
+import com.academy.sirma.finalExam.dto.ReferenceDto;
+import com.academy.sirma.finalExam.model.Employee;
+import com.academy.sirma.finalExam.repository.EmployeeRepository;
 import com.academy.sirma.finalExam.utility.NullDate;
 import com.academy.sirma.finalExam.utility.EmployeeReferenceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +15,17 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
-public class EmployeeReferenceService {
+public class EmployeeService {
     @Autowired
-    private EmployeeReferenceRepository employeeReferenceRepository;
+    private EmployeeRepository employeeRepository;
 
-    public String saveAll(List<EmployeeReference> employeeReferences) {
-        if(employeeReferences.isEmpty()) {
+    public String saveAll(List<Employee> employees) {
+        if(employees.isEmpty()) {
             return "No valid references to be imported";
         }
 
         try {
-            employeeReferenceRepository.saveAll(employeeReferences);
+            employeeRepository.saveAll(employees);
             return "Employee project references saved successfully";
         } catch (DataIntegrityViolationException e) {
             System.out.println("One or more references already exist in DB: " + e);
@@ -35,25 +35,25 @@ public class EmployeeReferenceService {
     }
 
     public String deleteAll() {
-        employeeReferenceRepository.deleteAll();
+        employeeRepository.deleteAll();
         return "Employee project references successfully deleted";
     }
 
     public List<Integer> getUniqueProjectId() {
-        return employeeReferenceRepository.findUniqueProjectId();
+        return employeeRepository.findUniqueProjectId();
     }
 
-    public EmployeeReference[] getAllReferences() {
-        List<EmployeeReference> employeeReferenceList = employeeReferenceRepository.findAll();
-        int arrayLength = employeeReferenceList.size();
-        return employeeReferenceList.toArray(new EmployeeReference[arrayLength]);
+    public Employee[] getAllReferences() {
+        List<Employee> employeeList = employeeRepository.findAll();
+        int arrayLength = employeeList.size();
+        return employeeList.toArray(new Employee[arrayLength]);
     }
 
-    public OutputReferenceDto getMaxSharedProjectDays() {
-        Map<String, OutputReferenceDto> outRefMap = getAllSharedProjectDays();
+    public ReferenceDto getMaxSharedProjectDays() {
+        Map<String, ReferenceDto> outRefMap = getAllSharedProjectDays();
         long maxSharedDays = 0;
         String maxKey = "";
-        for(Map.Entry<String, OutputReferenceDto> tempDto : outRefMap.entrySet()) {
+        for(Map.Entry<String, ReferenceDto> tempDto : outRefMap.entrySet()) {
             if(tempDto.getValue().getMaxSharedDays() > maxSharedDays) {
                 maxSharedDays = tempDto.getValue().getMaxSharedDays();
                 maxKey = tempDto.getKey();
@@ -64,14 +64,14 @@ public class EmployeeReferenceService {
         return outRefMap.get(maxKey);
     }
 
-    public Map<String, OutputReferenceDto> getAllSharedProjectDays() {
-        List<EmployeeReference> employeeReferenceList = employeeReferenceRepository.findAll();
-        int numberOfReferences = employeeReferenceList.size();
-        EmployeeReference[] empRefList = employeeReferenceList.toArray(new EmployeeReference[numberOfReferences]);
-        List<Integer> projectIds = new ArrayList<>();
+    public Map<String, ReferenceDto> getAllSharedProjectDays() {
+        List<Employee> employeeList = employeeRepository.findAll();
+        int numberOfReferences = employeeList.size();
+        Employee[] empRefList = employeeList.toArray(new Employee[numberOfReferences]);
+//        List<Integer> projectIds = new ArrayList<>();
         long tempDays = 0;
         String tempEmpKey = "";
-        Map<String, OutputReferenceDto> outputRefMap = new HashMap<>();
+        Map<String, ReferenceDto> outputRefMap = new HashMap<>();
         LocalDate tempStartDate = null;
         LocalDate tempEndDate = null;
         for (int i = 0; i < numberOfReferences - 1; i++) {
@@ -106,33 +106,33 @@ public class EmployeeReferenceService {
                         }
 
                         if (outputRefMap.containsKey(tempEmpKey)) {
-                            OutputReferenceDto existingOutputReferenceDto = outputRefMap.get(tempEmpKey);
-                            if (existingOutputReferenceDto.getProjectContribution().containsKey(empRefList[i].getProjectId())) {
-                                Long currentPeriod = existingOutputReferenceDto
+                            ReferenceDto existingReferenceDto = outputRefMap.get(tempEmpKey);
+                            if (existingReferenceDto.getProjectContribution().containsKey(empRefList[i].getProjectId())) {
+                                Long currentPeriod = existingReferenceDto
                                         .getProjectContribution()
                                         .get(empRefList[i].getProjectId());
                                 Long newPeriod = currentPeriod + tempDays;
-                                existingOutputReferenceDto
+                                existingReferenceDto
                                         .getProjectContribution()
                                         .put(empRefList[i].getProjectId(), newPeriod);
                             } else {
-                                existingOutputReferenceDto
+                                existingReferenceDto
                                         .getProjectContribution()
                                         .put(empRefList[i].getProjectId(), tempDays);
                             }
 
-                            Long currentMaxSharedDays = existingOutputReferenceDto.getMaxSharedDays();
-                            existingOutputReferenceDto.setMaxSharedDays(currentMaxSharedDays + tempDays);
-                            outputRefMap.put(tempEmpKey, existingOutputReferenceDto);
+                            Long currentMaxSharedDays = existingReferenceDto.getMaxSharedDays();
+                            existingReferenceDto.setMaxSharedDays(currentMaxSharedDays + tempDays);
+                            outputRefMap.put(tempEmpKey, existingReferenceDto);
 
                         } else {
-                            OutputReferenceDto newOutputReferenceDto = new OutputReferenceDto();
-                            newOutputReferenceDto.setReferenceIndex(tempEmpKey);
-                            newOutputReferenceDto.setMaxSharedDays(tempDays);
+                            ReferenceDto newReferenceDto = new ReferenceDto();
+                            newReferenceDto.setReferenceIndex(tempEmpKey);
+                            newReferenceDto.setMaxSharedDays(tempDays);
                             HashMap<Integer, Long> tempProjectContribution = new HashMap<>();
                             tempProjectContribution.put(empRefList[i].getProjectId(), tempDays);
-                            newOutputReferenceDto.setProjectContribution(tempProjectContribution);
-                            outputRefMap.put(tempEmpKey, newOutputReferenceDto);
+                            newReferenceDto.setProjectContribution(tempProjectContribution);
+                            outputRefMap.put(tempEmpKey, newReferenceDto);
                         }
 
                     }
@@ -146,11 +146,11 @@ public class EmployeeReferenceService {
         return outputRefMap;
     }
 
-    public String addReference(EmployeeReferenceDto empRefDto) {
-        EmployeeReference empRef = new EmployeeReference();
+    public String addReference(EmployeeDto empRefDto) {
+        Employee empRef = new Employee();
         empRef = EmployeeReferenceHelper.empRefDtoToEmpRef(empRefDto);
         try {
-            employeeReferenceRepository.save(empRef);
+            employeeRepository.save(empRef);
             return "Employee reference successfully added";
         } catch(DataIntegrityViolationException e) {
             System.out.println("The reference already exist: " + e);
@@ -160,17 +160,17 @@ public class EmployeeReferenceService {
     }
 
     public String deleteById(Long refId) {
-        if(employeeReferenceRepository.existsById(refId)) {
-            employeeReferenceRepository.deleteById(refId);
+        if(employeeRepository.existsById(refId)) {
+            employeeRepository.deleteById(refId);
             return "Reference id " + refId + " deleted successfully";
         }
 
         return "Reference " + refId + " not found";
     }
 
-    public EmployeeReferenceDto getById(Long refId) {
-        EmployeeReference empRef = employeeReferenceRepository.findById(refId).orElse(null);
-        EmployeeReferenceDto empRefDto = new EmployeeReferenceDto();
+    public EmployeeDto getById(Long refId) {
+        Employee empRef = employeeRepository.findById(refId).orElse(null);
+        EmployeeDto empRefDto = new EmployeeDto();
         if(empRef != null) {
             empRefDto = EmployeeReferenceHelper.empRefToEmpRefDto(empRef);
         } else {
@@ -179,15 +179,15 @@ public class EmployeeReferenceService {
         return empRefDto;
     }
 
-    public EmployeeReferenceDto updateById(Long refId, EmployeeReferenceDto empRefDto) {
-            EmployeeReference empRef = employeeReferenceRepository.findById(refId).orElse(null);
+    public EmployeeDto updateById(Long refId, EmployeeDto empRefDto) {
+            Employee empRef = employeeRepository.findById(refId).orElse(null);
             if (empRef != null) {
                 empRef.setEmpId(empRefDto.getEmpId());
                 empRef.setProjectId(empRefDto.getProjectId());
                 empRef.setDateFrom(empRefDto.getDateFrom());
                 empRef.setDateTo(empRefDto.getDateTo());
                 try {
-                    employeeReferenceRepository.save(empRef);
+                    employeeRepository.save(empRef);
                     return empRefDto;
                 } catch(DataIntegrityViolationException e) {
                     System.out.println("Updated reference already exist in db: " + e);

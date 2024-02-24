@@ -1,11 +1,11 @@
 package com.academy.sirma.finalExam.utility;
 
-import com.academy.sirma.finalExam.dto.EmployeeReferenceDto;
-import com.academy.sirma.finalExam.model.EmployeeReference;
+import com.academy.sirma.finalExam.dto.EmployeeDto;
+import com.academy.sirma.finalExam.model.Employee;
 
 public class EmployeeReferenceHelper {
-    public static EmployeeReference empRefDtoToEmpRef(EmployeeReferenceDto empRefDto) {
-        EmployeeReference empRef = new EmployeeReference();
+    public static Employee empRefDtoToEmpRef(EmployeeDto empRefDto) {
+        Employee empRef = new Employee();
         empRef.setEmpId(empRefDto.getEmpId());
         empRef.setProjectId(empRefDto.getProjectId());
         empRef.setDateFrom(empRefDto.getDateFrom());
@@ -13,8 +13,8 @@ public class EmployeeReferenceHelper {
         return empRef;
     }
 
-    public static EmployeeReferenceDto empRefToEmpRefDto(EmployeeReference empRef) {
-        EmployeeReferenceDto empRefDto = new EmployeeReferenceDto();
+    public static EmployeeDto empRefToEmpRefDto(Employee empRef) {
+        EmployeeDto empRefDto = new EmployeeDto();
         empRefDto.setEmpId(empRef.getEmpId());
         empRefDto.setProjectId(empRef.getProjectId());
         empRefDto.setDateFrom(empRef.getDateFrom());

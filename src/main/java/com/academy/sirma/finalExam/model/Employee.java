@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Table(name = "employee_project_reference",
         uniqueConstraints = {@UniqueConstraint(columnNames =
                 {"empId", "projectId", "dateFrom", "dateTo"})})
-public class EmployeeReference {
+public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,10 +18,10 @@ public class EmployeeReference {
     private LocalDate dateFrom;
     private LocalDate dateTo;
 
-    public EmployeeReference() {
+    public Employee() {
     }
 
-    public EmployeeReference(int empId, int projectId, LocalDate dateFrom, LocalDate dateTo) {
+    public Employee(int empId, int projectId, LocalDate dateFrom, LocalDate dateTo) {
         this.empId = empId;
         this.projectId = projectId;
         this.dateFrom = dateFrom;
@@ -60,7 +60,7 @@ public class EmployeeReference {
         this.dateTo = dateTo;
     }
 
-    public boolean isSame(EmployeeReference empRef) {
+    public boolean isSame(Employee empRef) {
         if(this.empId != empRef.getEmpId() ||
         this.projectId != empRef.getProjectId() ||
         !empRef.getDateFrom().isEqual(this.dateFrom)) {

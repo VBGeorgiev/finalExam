@@ -1,10 +1,10 @@
 package com.academy.sirma.finalExam.controller;
 
-import com.academy.sirma.finalExam.dto.EmployeeReferenceDto;
-import com.academy.sirma.finalExam.dto.OutputReferenceDto;
-import com.academy.sirma.finalExam.model.EmployeeReference;
+import com.academy.sirma.finalExam.dto.EmployeeDto;
+import com.academy.sirma.finalExam.dto.ReferenceDto;
+import com.academy.sirma.finalExam.model.Employee;
 import com.academy.sirma.finalExam.repository.DatabaseBackupFile;
-import com.academy.sirma.finalExam.service.EmployeeReferenceService;
+import com.academy.sirma.finalExam.service.EmployeeService;
 import com.academy.sirma.finalExam.repository.CsvDataFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,60 +16,60 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/")
-public class EmployeeReferenceController {
+public class EmployeeController {
     @Autowired
-    private EmployeeReferenceService employeeReferenceService;
+    private EmployeeService employeeService;
 
     @PostMapping("/import")
     public String uploadEmployeeReferenceFile(){
-        List<EmployeeReference> employeeReferenceList = new CsvDataFile().readEmployeeReferenceList();
-        return employeeReferenceService.saveAll(employeeReferenceList);
+        List<Employee> employeeList = new CsvDataFile().readEmployeeReferenceList();
+        return employeeService.saveAll(employeeList);
     }
 
     @PutMapping("/backup")
     public ResponseEntity<?> backupDatabase() {
-        EmployeeReference[] empRef = employeeReferenceService.getAllReferences();
+        Employee[] empRef = employeeService.getAllReferences();
         String response = new DatabaseBackupFile().writeDatabase(empRef);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/getProjectIds")
     public String getUniqueProjectIds() {
-        return employeeReferenceService.getUniqueProjectId().toString();
+        return employeeService.getUniqueProjectId().toString();
     }
 
     @GetMapping("/getAll")
     public ResponseEntity<?> getAllSharedProjectDays() {
-        Map<String, OutputReferenceDto> response = employeeReferenceService.getAllSharedProjectDays();
+        Map<String, ReferenceDto> response = employeeService.getAllSharedProjectDays();
 
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/getMax")
     public ResponseEntity<?> getMaxSharedProjectDays() {
-        OutputReferenceDto response = employeeReferenceService.getMaxSharedProjectDays();
+        ReferenceDto response = employeeService.getMaxSharedProjectDays();
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/deleteAll")
     public String deleteAllReferencesFromDatabase() {
-        return employeeReferenceService.deleteAll();
+        return employeeService.deleteAll();
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addReference(@RequestBody EmployeeReferenceDto empRefDto) {
-        return ResponseEntity.ok(employeeReferenceService.addReference(empRefDto));
+    public ResponseEntity<?> addReference(@RequestBody EmployeeDto empRefDto) {
+        return ResponseEntity.ok(employeeService.addReference(empRefDto));
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
-        String response = employeeReferenceService.deleteById(id);
+        String response = employeeService.deleteById(id);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("get/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
-        EmployeeReferenceDto empRefDto = employeeReferenceService.getById(id);
+        EmployeeDto empRefDto = employeeService.getById(id);
         if(empRefDto == null) {
             return ResponseEntity.ok("No reference has been found by this id");
         } else {
@@ -79,8 +79,8 @@ public class EmployeeReferenceController {
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity<?> updateById(@PathVariable Long id, @RequestBody EmployeeReferenceDto empRefDto) {
-        EmployeeReferenceDto outEmpRefDto = employeeReferenceService.updateById(id, empRefDto);
+    public ResponseEntity<?> updateById(@PathVariable Long id, @RequestBody EmployeeDto empRefDto) {
+        EmployeeDto outEmpRefDto = employeeService.updateById(id, empRefDto);
         if(outEmpRefDto == null) {
             return ResponseEntity.ok("Update ignored: No reference has been found by this id or already exist");
         } else {

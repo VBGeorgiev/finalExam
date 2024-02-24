@@ -1,6 +1,6 @@
 package com.academy.sirma.finalExam.repository;
 
-import com.academy.sirma.finalExam.model.EmployeeReference;
+import com.academy.sirma.finalExam.model.Employee;
 import com.academy.sirma.finalExam.utility.Constants;
 import com.academy.sirma.finalExam.validate.Validate;
 
@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CsvDataFile {
-    public List<EmployeeReference> readEmployeeReferenceList() {
+    public List<Employee> readEmployeeReferenceList() {
         String line;
-        List<EmployeeReference> employeeReferenceList = new ArrayList<>();
+        List<Employee> employeeList = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(Constants.uploadFileName))) {
             while ((line = br.readLine()) != null) {
                 if(line.isEmpty()) {
@@ -25,7 +25,7 @@ public class CsvDataFile {
                 String[] item = line.split(Constants.commaSeparated);
                 int empId = 0;
                 int projectId = 0;
-                EmployeeReference tempEmployeeReference = new EmployeeReference();
+                Employee tempEmployee = new Employee();
                 if(Validate.isNumber(item[0])) {
                     empId = Integer.parseInt(item[0]);
                 } else {
@@ -49,15 +49,15 @@ public class CsvDataFile {
                     continue;
                 }
 
-                tempEmployeeReference.setEmpId(empId);
-                tempEmployeeReference.setProjectId(projectId);
-                tempEmployeeReference.setDateFrom(parseDates[0]);
-                tempEmployeeReference.setDateTo(parseDates[1]);
+                tempEmployee.setEmpId(empId);
+                tempEmployee.setProjectId(projectId);
+                tempEmployee.setDateFrom(parseDates[0]);
+                tempEmployee.setDateTo(parseDates[1]);
 
 
                 boolean isNotDublicate = true;
-                for(int i = 0; i < employeeReferenceList.size(); i++) {
-                    if(employeeReferenceList.get(i).isSame(tempEmployeeReference)) {
+                for(int i = 0; i < employeeList.size(); i++) {
+                    if(employeeList.get(i).isSame(tempEmployee)) {
                         isNotDublicate = false;
                         break;
                     }
@@ -65,7 +65,7 @@ public class CsvDataFile {
                 }
 
                 if(isNotDublicate) {
-                    employeeReferenceList.add(tempEmployeeReference);
+                    employeeList.add(tempEmployee);
                 } else {
                     System.out.println("This duplicated reference, (" + line + "), will be ignored");
                 }
@@ -78,7 +78,7 @@ public class CsvDataFile {
             throw new RuntimeException(e);
         }
 
-        return employeeReferenceList;
+        return employeeList;
     }
 
 }
